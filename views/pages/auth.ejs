@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <% include ../partials/header %>
+  <body class="auth">
+    <div id="loading" class="loading">
+        <i class="fa fa-spinner fa-spin fa-fw"></i>
+    </div>
+    <!-- Navigation -->
+   <div class="wraper">
+
+        <!-- Navigation -->
+        <header class="header navbar-fixed-top">
+            <div class="header-limiter">
+                <h1><i class="fa fa-binoculars" aria-hidden="true"></i><a href="#">Souq<span>Scrap</span></a></h1>
+                <ul>
+
+                <div class="header-user-menu">
+                  <i class="fa fa-bars fa-2x text-right" aria-hidden="true"></i>
+                  <ul>
+                    <li><a href="#" data-toggle="modal" data-target="#addModal">Add Item</a></li>
+                    <li><a href="#" data-toggle="modal" data-target="#friendsModal">Check Friends</a></li>
+                    <li><a href="#" class="signoutBtn">Sign Out</a></li>
+                  </ul>
+                </div>
+            </div>
+        </header>
+        
+        <div class="container index-content">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-primary beerboard">
+                      <div class="panel-heading color-primary">
+                        <h3 class="panel-title"><i class="fa fa-search" aria-hidden="true"></i> Products on track</h3>
+                      </div>
+                      <div class="panel-body" id="products">
+                        <i><p>No products to show. <a href="#" data-toggle="modal" data-target="#addModal">Click here</a> and start monitoring prices on <a target="_blank" href="http://www.souq.com/" >Souq.com</a></p></i>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% include ../partials/footer%>
+
+    <!-- addModal -->
+    <div class="modal fade" tabindex="-1" id="addModal" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Add Product</h4>
+          </div>
+          <div class="modal-body">
+          <p>Please, insert the link from the product you want to monitor.</p>
+            <form id="addForm">
+                <div class="form-group">
+                  <label class="control-label" for="addproduct">URL:</label>
+                  <input type="text" class="form-control" name="addproduct" id="addproduct" placeholder="Ex: http://uae.souq.com/ae-en/htc-one-e8-dual-sim-16gb-4g-lte-white-7396674/i/" required>
+                </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button id="addTrack" type="button" class="btn btn-primary">Track</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+   <% include modal%>
+
+   <% include ../partials/scripts %>
+   <script src="js/auth.js" type="text/javascript"></script>
+  </body>
+</html>

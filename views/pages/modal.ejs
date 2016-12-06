@@ -1,0 +1,147 @@
+<!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                   <h4 class="modal-title">Sign In</h4>
+               </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-sm-offset-2 col-md-5 col-md-offset-1 col-lg-4 col-lg-offset-1">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <!-- Sign in form -->
+                                        <form name="signinForm" id="signinFormModal" class="signinForm"  data-toggle="validator" role="form">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <input type="email" class="form-control" placeholder="Email" id="email" data-error="Bruh, that email address is invalid" required >
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input type="password" name="password" class="form-control" placeholder="Password" id="password" data-minlength="6" minlength="6" required>
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-lg-12 text-center">
+                                                    <div id="successSignIn"></div>
+                                                    <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>   
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Sign Up Modal -->
+    <div class="modal fade" id="signUpModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                   <h4 class="modal-title">Sign Up</h4>
+               </div>
+                <div class="modal-body">
+                     <div class="container">
+                        <div class="row">
+                              <div class="col-lg-4 col-lg-offset-1 col-md-5 col-md-offset-1 col-sm-7 col-sm-offset-1 col-xs-12">
+                                <div class="signup-form">
+                                    <div class="row">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <div id="succesSignUp"></div>
+                                                <h3 class="text-center"><b>Sign up now!</b></h3>
+                                                <form class="signupForm" id="signupFormModal" data-toggle="validator" role="form">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="form-group">
+                                                                <input type="text" class="form-control" placeholder="Name" id="name" required>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <input type="email" class="form-control" placeholder="Email" id="email" data-error="Bruh, that email address is invalid" required>
+                                                                <div class="help-block with-errors"></div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <input type="password" name="password" class="form-control" placeholder="Password" id="password" data-minlength="6" minlength="6" required>
+                                                                <div class="help-block">Minimum of 6 characters</div>
+                                                                </input>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <input type="password" class="form-control" placeholder="Confirm Password" id="cpassword" minlength="6" data-match="#password" data-match-error="Whoops, these don't match"></input>
+                                                                <div class="help-block with-errors"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="clearfix"></div>
+                                                        <div class="col-lg-12 text-center">
+                                                            <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+                                                            <p style="font-size: 0.9em;" class="text-muted">By clicking you agree with our <u><a href="#" data-toggle="modal" data-target="#termsAndConditions">Terms of Services</a>.</u></p>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div class="modal fade" id="alertModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title" id="alertModalTitle"></h4>
+                </div>
+                <div class="modal-body" id="alertModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy-->
+    <div class="modal fade" id="privacyPolicy" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Privacy Policy</h4>
+          </div>
+          <div class="modal-body" id="privacyBody">
+          Loading...
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- Terms and Conditions-->
+    <div class="modal fade" id="termsAndConditions" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Terms and Conditions</h4>
+          </div>
+          <div class="modal-body" id="termsBody">
+          Loading...
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
