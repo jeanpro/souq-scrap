@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var request = require('request');
 //debugger
-var debugRequest = require('request-debug')(request);
+// var debugRequest = require('request-debug')(request);
 var cheerio = require('cheerio');
 
 // Import Firebase Admin SDK
