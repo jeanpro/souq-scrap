@@ -1,0 +1,28 @@
+<div class="col-sm-6 col-lg-4 col-md-4">
+  <div class="thumbnail">
+  	<a href="<%= url%>" target="_blank">
+    	<img class="track-image" src="<%= img.replace('item_L','item_M').replace('item_XL','item_M').replace('item_XXL','item_M') %>">
+    </a>
+    <div class="caption">
+      <h3 class="track-title"><%= title %></h3>
+        <table class="table table-condensed">
+			<thead>
+				<tr>
+					<th>Original</th>
+					<th>Actual</th>
+					<th>%</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><%= originalPrice %></td> 
+					<td><%= actualPrice %></td>
+					<td><%= Math.round(100*(originalPrice - actualPrice)/originalPrice)%></td>
+				</tr> 
+			</tbody>
+		</table>
+      <p><a href="#" data-original="<%= timestamp %>" data-id="<%= pid %>" data-toggle="modal" data-target="#graphModal" class="btn btn-primary btn-block graph-open" role="button">Graph</a></p>
+    </div>
+  </div>
+</div>
+

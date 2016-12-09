@@ -12,6 +12,15 @@ body {
   /*background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('../img/background-xs.jpg');*/
 }
 
+/*CHECK IF IS SMARTPHONE*/
+@media only screen and (max-width: 760px) {
+  #isSmartphone { display: none; }
+}
+
+.ct-label{
+  font-size: 1.2em;
+}
+
 .auth{
   /*background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../img/profile.jpg');
 */}
@@ -110,8 +119,6 @@ body {
 .btn-primary:hover, .panel-primary, .panel-heading{
   border-color: #213454;
 }
-
-
 
 
 /*LOADING*/

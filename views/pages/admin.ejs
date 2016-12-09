@@ -22,6 +22,8 @@
                   <i class="fa fa-bars fa-2x text-right" aria-hidden="true"></i>
                   <ul>
                     <li><a href="#" data-toggle="modal" data-target="#addModal">Add Item</a></li>
+                    <li><a href="#" class="productTracker">Tracker</a></li>
+                    <li><a href="#" class="listAll">List all</a></li>
                     <li><a href="#" class="signoutBtn">Sign Out</a></li>
                   </ul>
                 </div>
@@ -29,17 +31,28 @@
         </header>
         
         <div class="container index-content">
-            <div class="row">
+            <div class="row" id="board">
                 <div class="col-lg-12">
                     <div class="panel panel-primary beerboard">
                       <div class="panel-heading color-primary">
                         <h3 class="panel-title" data-toggle="modal" data-target="#graphModal"><i class="fa fa-search" aria-hidden="true"></i> Products on track</h3>
                       </div>
                       <div class="panel-body" id="products">
-                        <i class="fa fa-spinner fa-spin fa-fw"></i>Loading...
+                        Loading...
                       </div>
                     </div>
                 </div>
+            </div>
+            <div class='row'>
+              <div class="col-lg-12">
+                <div class="panel panel-primary">
+                  <div class="panel-heading color-primary">
+                    <h3 class="panel-title" data-toggle="modal" data-target="#graphModal"><i class="fa fa-search" aria-hidden="true"></i> 
+                    All Products</h3>
+                  </div>
+                  <div class="panel-body" id='list'></div>
+                </div>
+              </div>
             </div>
         </div>
     </div>
@@ -91,5 +104,6 @@
    <script src="js/chartist.min.js" type="text/javascript"></script>
    <script src="js/moment.min.js" type="text/javascript"></script>
    <script src="js/auth.min.js" type="text/javascript"></script>
+   <script src="js/admin.min.js" type="text/javascript"></script>
   </body>
 </html>

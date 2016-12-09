@@ -1,0 +1,38 @@
+<table class="table table-hover">
+	<thead> 
+		<tr> 
+			<th>#</th> 
+			<th>Title</th> 
+			<th>Actual Price</th>
+			<th>Change</th>
+			<th>Last Update</th>
+		</tr> 
+	</thead> 
+	<tbody> 
+	<% for(var i = 0; i<data.length;i++){ %>
+		<tr id="<%= data[i].pid %>"> 
+			<th scope="row"><%=i+1 %></th> 
+			<td><a class="product-link" href="<%= data[i].url %>" target="_blank"><%= data[i].title %></a></td> 
+			<td class="text-center product-price"><%= data[i].actualPrice%></td>
+			<td class="text-center product-price-change">
+				<% if(data.status == 1){%>
+					<i class="fa fa-long-arrow-up" style="color:red" aria-hidden="true"></i>
+				<%} else if(data.status == -1){%>
+					<i class="fa fa-long-arrow-down" style="color:green" aria-hidden="true"></i>
+				<% } else{ %>
+					<i class="fa fa-minus" aria-hidden="true"></i>
+				<% } %>
+			</td>
+			<td class="text-center product-update"><%= data[i].lastUpdate%></td>
+			<td>
+				<button type="button" class="btn btn-primary new-request" autocomplete="off" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Loading">
+				  	Refresh Price
+				</button>
+			</td>
+			<td>
+				<a href="#" data-id="<%= data[i].pid %>" data-toggle="modal" data-target="#graphModal" class="btn btn-info graph-open" role="button">Graph</a>
+			</td>
+		</tr> 
+	<% } %>
+	</tbody>
+</table>

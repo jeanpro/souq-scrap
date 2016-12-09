@@ -14,6 +14,11 @@ $(document).ready(function(){
     console.log("Click");
   });
 
+  //Disable buttons
+  $(".disabled").on('click',function(e){
+    e.preventDefault();
+  });
+
 //Sign In Button
 $('.signinBtn').on('click', function(e){
   ga('send', 'event','click', 'btn', 'SignIn');
@@ -31,6 +36,7 @@ $(".signinForm").on("submit", function(event){
         event.preventDefault(); // prevent default submit behaviour
         loading();
         // get values from FORM
+        alertSend(" ","#successSignIn","info","Loading...");
         var email = $("input#email").val();
         var password = $("input#password").val();
         toggleSignIn(email,password);
@@ -39,40 +45,54 @@ $(".signinForm").on("submit", function(event){
 /**
 *   Sign Up Form Validation
 **/
+$(".modal").on('hide.bs.modal',function(e){
+  resetModal(false,this);
+});
+
+$("#signUpModal button").on('click',function(event){
+  if($(this).hasClass('disabled')){
+    event.preventDefault();
+  }
+});
 $("#signUpModal").on("shown.bs.modal", function(){
   $(".signupForm").on("submit",function(event){
         event.preventDefault(); // prevent default submit behaviour
         loading();
+        var timeout = setTimeout(function(){
+          hideLoading();
+        },5000);
         if(!$(this).find('button[type="submit"]').hasClass('disabled')){
           ga('send', 'event','click', 'submitForm', 'ValidationSignUp');
           // get values from FORM
           var formid = $(this).attr('id');
           var name = $('#'+formid).find('input#name').val();
           var email = $('#'+formid).find('input#email').val();
-          var password = $('#'+formid).find('input#password').val();
+          var password = $('#'+formid).find('input#cpassword').val();
+          alertSend(" ","#successSignUp","info","Loading...");
           var userAuth = handleSignUp(name,email,password);
-          userAuth.then(function(user){
+          if(userAuth){
+            userAuth.then(function(user){
               // Add information from user in DB
-              user.then(function(user){
-                  // console.log(user);
-                  alertModal('success','Thank you for registering!', "Yay!");
-                   var usersInfoRef = firebase.database().ref('usersInfo');
-                   var newUser = usersInfoRef.push();
-                    newUser.set({
-                          provider: user.providerData[0].providerId,
-                          name: name,
-                          email: user.providerData[0].email,
-                          photo: user.providerData[0].photoURL
-                    });
-              var email = sendEmailVerification();
-              email.then(function(){
-                  alertModal('success','Sign Up complete! You will receive an email shortly.', "Yay!");
+             var usersInfoRef = firebase.database().ref('usersInfo');
+             var newUser = usersInfoRef.push();
+              newUser.set({
+                    provider: user.providerData[0].providerId,
+                    name: name,
+                    email: user.providerData[0].email,
+                    photo: user.providerData[0].photoURL
               });
-              ga('send', 'event','click', 'submitForm', 'signUp');   
-              });
-          }).catch(function(error){
-              $('input').val('');
-          });
+              ga('send', 'event','click', 'submitForm', 'signUp');
+            }).catch(function(error){
+              alertSend(error.message,"#succesSignUp","danger","Error!");
+              console.log(error);
+              clearTimeout(timeout);hideLoading();
+            });
+          }
+          else{
+            alertSend("Password and/or email not valid.","#succesSignUp","danger","Error!");  
+            clearTimeout(timeout);hideLoading();  
+          }
+          
         }
   })
 });
@@ -108,10 +128,9 @@ function toggleSignIn(email, password) {
     firebase.auth().signOut();
   } else {
     firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
-      var errorCode = error.code;
       var errorMessage = error.message;
-      console.log(error);
-      alertModal('danger',errorMessage,'Sign In fail!');
+      alertSend(errorMessage,'#loginModal .modal-body','danger','Sign In fail!');
+      hideLoading();
     });
   }
 }
@@ -126,29 +145,33 @@ var database = firebase.database();
  * Handles the sign up button press.
  */
 function handleSignUp(name, email, password) {
-    var firstName = name; // For Success/Failure Message
-    // Check for white space in name for Success/Fail message
-    if (firstName.indexOf(' ') >= 0) {
-        firstName = name.split(' ').slice(0, -1).join(' ');
-    }
-  // Sign in with email and pass.
-  // [START createwithemail]
-  var user = firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
-    // Handle Errors here.
-    var errorCode = error.code;
-    var errorMessage = error.message;
-    alertModal('danger',errorMessage);
-    console.log(error);
+  if(!password || !email ){
+    alertSend("Password and/or email invalid","#succesSignUp","danger","Error!");
+    hideLoading();
     return false;
-  });
-  // [END createwithemail]
-  return user;
+  }
+  // Sign in with email and pass.
+  return firebase.auth().createUserWithEmailAndPassword(email, password);
   
 }
 
 /**
- * Sends an email verification to the user.
- */
+*** Sends an email verification to the user.
+*/
+
+/* TODO Need to implement sendEmail verification
+*
+  var email = sendEmailVerification();
+  email.then(function(){
+      alertSend('Sign Up complete! You will receive an email shortly.','#succesSignUp', 'success',"Yay!");
+      clearTimeout(timeout);hideLoading();
+  }).catch(function(error){
+    alertSend(error.message,"#succesSignUp","danger","Error!");
+    console.log(error);  
+  });
+*
+*/
+
 function sendEmailVerification() {
   return firebase.auth().currentUser.sendEmailVerification();
 }
@@ -195,6 +218,7 @@ function initApp() {
   // Listening for auth state changes.
   firebase.auth().onAuthStateChanged(function(user) {
     if (user) { 
+      Cookies.set('uid', user.uid);
        $('#signinBtn').data('status',true);
       firebase.database().ref('usersInfo/'+user.uid).update({
             provider: user.providerData[0].providerId,
@@ -205,12 +229,7 @@ function initApp() {
         ga('set', 'userId', user.uid); // Set the user ID using signed-in user_id.
         if(window.location.pathname === "/"){
           loading();
-          $.post('/login', {uid:user.uid}, function(data){
-            location.reload();
-            setTimeout(function() {
-              hideLoading();
-            }, 1000);
-          });
+          window.location.pathname = "auth/"+user.uid;
         }
       });
     } else {
@@ -220,4 +239,3 @@ function initApp() {
     
   });
 }
-

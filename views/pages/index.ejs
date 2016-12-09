@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
-  <% include ../partials/header %>
+  <head>
+    <% include ../partials/header %>
+  </head>
   <body>
     <div id="loading" class="loading">
         <i class="fa fa-spinner fa-spin fa-fw"></i>
@@ -21,7 +23,17 @@
             </div>
         </header>
         <div class="container index-content">
-            
+            <div class="jumbotron">
+              <div class="container">
+                <h1 class="display-3">Track, buy, save!</h1>
+                <p class="lead">Track the prices of your favorite products at <a href="http://uae.souq.com" target="_blank">Souq.com</a></p>
+                <hr class="m-y-md">
+                <p>Sign up now and have access to a real time monitor of the Souq.com prices. You can track products you want and get an email when the prices decrease.</p>
+                <p class="lead">
+                  <a class="btn btn-primary btn-lg" href="#" data-toggle="modal" data-target="#signUpModal" role="button">Sign Up Now</a>
+                </p>
+              </div>
+              </div>
         </div>
     </div>
     <% include ../partials/footer%>
@@ -29,7 +41,7 @@
    <% include modal%>
 
    <% include ../partials/scripts %>
-   <script src="js/validator.min.js" type="text/javascript"></script>
-   <script src="js/index.js" type="text/javascript"></script>
+   <script src="js/validator.min.js"></script>
+   <script src="js/index.min.js" type="text/javascript"></script>
   </body>
 </html>

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "supervisor ./bin/www"
+    "dev": "gulp && supervisor ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.15.2",
@@ -17,10 +17,17 @@
     "express-session": "^1.14.2",
     "firebase-admin": "^4.0.3",
     "morgan": "~1.7.0",
+    "postman-request": "^2.79.1-postman.1",
     "request": "^2.79.0",
     "serve-favicon": "~2.3.0"
   },
   "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^2.2.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.0.0",
+    "pump": "^1.0.1",
     "request-debug": "^0.2.0"
   }
 }
