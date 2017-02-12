@@ -14,11 +14,6 @@ $(document).ready(function(){
     console.log("Click");
   });
 
-  //Disable buttons
-  $(".disabled").on('click',function(e){
-    e.preventDefault();
-  });
-
 //Sign In Button
 $('.signinBtn').on('click', function(e){
   ga('send', 'event','click', 'btn', 'SignIn');
@@ -34,12 +29,14 @@ $('.signinBtn').on('click', function(e){
 //Sign In Form
 $(".signinForm").on("submit", function(event){
         event.preventDefault(); // prevent default submit behaviour
-        loading();
-        // get values from FORM
-        alertSend(" ","#successSignIn","info","Loading...");
-        var email = $("input#email").val();
-        var password = $("input#password").val();
-        toggleSignIn(email,password);
+        if(!$('.signinForm').find('.btn').hasClass('disabled')){
+          loading();
+          // get values from FORM
+          alertSend(" ","#successSignIn","info","Loading...");
+          var email = $("input#email").val();
+          var password = $("input#password").val();
+          toggleSignIn(email,password);
+        }
       });
 
 /**

@@ -16,7 +16,9 @@
     "express": "~4.14.0",
     "express-session": "^1.14.2",
     "firebase-admin": "^4.0.3",
+    "lodash": "^4.17.4",
     "morgan": "~1.7.0",
+    "node-schedule": "^1.2.0",
     "postman-request": "^2.79.1-postman.1",
     "request": "^2.79.0",
     "serve-favicon": "~2.3.0"

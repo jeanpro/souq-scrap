@@ -59,7 +59,8 @@ $.ajax({
     }
   },
   error:function(error){
-    //TODO alert modal
+    console.log(error);
+    alertModal('alert-danger','Error during request...','Error');
   }
 });
 
@@ -207,7 +208,6 @@ function generateGraph(pid, obj, selector){
     var container = $(selector).find('.ct-chart');
       $(container).html('');
       var containerID = $(container).attr('id');
-      // Get last 5 prices
       $.ajax({
         method: "POST",
         url: "/logs",
@@ -216,10 +216,16 @@ function generateGraph(pid, obj, selector){
             if(data.success){
               var timestamps = [];
               var prices = [];
+              var dates = [];
               data.stamps.forEach(function(ele,i){
-                prices.push(ele.price);
                 var date = timestamp2dateObj(ele.timestamp);
-                timestamps.push(date.day+"/"+date.month+"<br>("+ele.price+")");
+                dates.forEach(function(d){
+                  if(d.day != date.day || d.month != date.month || d.year != date.year){
+                    prices.push(ele.price);
+                    timestamps.push(date.day+"/"+date.month+"<br>("+ele.price+")");    
+                    dates.push({day:date.day, month:date.month, year:date.year});
+                  }
+                });
               });
               //var dataSetup = makeGraphData(prices, timestamps);
               //Create graph.

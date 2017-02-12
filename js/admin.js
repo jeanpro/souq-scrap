@@ -7,6 +7,7 @@ $(".productTracker").on('click',function(){
 });
 $(".listAll").on('click', function(e){
 	e.preventDefault();
+	$('.loading').show();
 	//Get All elements
 	$("#list").html("Loading...");
 	$.ajax({
@@ -23,6 +24,7 @@ $(".listAll").on('click', function(e){
 				$(".new-request").button('loading');
 				var $this = $(this);
 				var pid = $this.parents('tr').attr('id');
+				var actualPrice = parseFloat($this.find('td.text-center.product-price').text());
 				var url = $this.parents('tr').find('.product-link').attr('href');
 				if(url){
 					$.ajax({
@@ -32,8 +34,17 @@ $(".listAll").on('click', function(e){
 						success:function(data){
 							$(".new-request").button('reset');
 							if(data.success){
-								$this.parents('tr').find('.product-price').val(data.actualPrice);
-								$this.parents('tr').find('.product-update').val(data.lastUpdate);
+								$this.find('td.text-center.product-price').text(data.actualPrice);
+								if(parseFloat(data.actualPrice) > actualPrice){
+									$this.find('td.text-center.product-price-change').html('<i class="fa fa-arrow-up"></i>');	
+								}
+								else if(parseFloat(data.actualPrice) = actualPrice){
+									$this.find('td.text-center.product-price-change').html('<i class="fa fa-minus"></i>');		
+								}
+								else{
+									$this.find('td.text-center.product-price-change').html('<i class="fa fa-arrow-down"></i>');
+								}
+								$this.parents('tr').find('.product-update').text(data.lastUpdate);
 								$this.parents('tr').addClass('success');
 							}else{
 								$this.parents('tr').addClass('danger');
@@ -76,6 +87,7 @@ $(".listAll").on('click', function(e){
 		         },200); 
 		        });
 		      });
+			$('.loading').hide();
 		},
 		error: function(error){
 			alertModal('danger','Unable to list products.','Error');

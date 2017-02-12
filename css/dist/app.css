@@ -61,7 +61,16 @@ body {
 .font-adjust{
   font-size: 0.7em;
 }
-
+.thumbnail a>img{
+  max-height: 120px;
+  height: 100px;
+}
+.track-title{
+     overflow: hidden;
+     text-overflow: ellipsis;
+     font-size:20px;
+     max-height: 44px;
+}
 
 @media(min-width: 768px) and (max-width: 1440px){  
   body{
@@ -239,6 +248,80 @@ body {
     -o-transform: rotate(360deg);
     transform: rotate(360deg);
   }
+}
+
+/*Logo*/
+.header .header-limiter h1{
+  float: left;
+  font: normal 24px Cookie, Arial, Helvetica, sans-serif;
+  line-height: 1;
+  /*margin: -8px 0 2px;*/
+  margin:10px;
+  text-align: center;
+}
+
+.header .header-limiter h1 span {
+  color: #5383d3;
+}
+
+.header .header-limiter h1 i{
+  color: #5383d3;
+}
+
+
+/*Modal*/
+
+.add-info
+{
+    padding:30px
+}
+
+.btn-circle
+{
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 12px;
+    line-height: 1.428571429;
+    border-radius: 15px;
+}
+
+.btn-circle.btn-xl
+{
+    width: 70px;
+    height: 70px;
+    padding: 10px 16px;
+    font-size: 24px;
+    line-height: 1.33;
+    border-radius: 35px;
+}
+
+
+/* VERTICAL */
+@keyframes vertical {
+  0%{transform:translate(0,-3px)}
+  4%{transform:translate(0,3px)}
+  8%{transform:translate(0,-3px)}
+  12%{transform:translate(0,3px)}
+  16%{transform:translate(0,-3px)}
+  20%{transform:translate(0,3px)}
+  22%,100%{transform:translate(0,0)}
+}
+.faa-vertical.animated,
+.faa-vertical.animated-hover:hover,
+.faa-parent.animated-hover:hover > .faa-vertical {
+  animation: vertical 2s ease infinite;
+}
+.faa-vertical.animated.faa-fast,
+.faa-vertical.animated-hover.faa-fast:hover,
+.faa-parent.animated-hover:hover > .faa-vertical.faa-fast {
+  animation: vertical 1s ease infinite;
+}
+.faa-vertical.animated.faa-slow,
+.faa-vertical.animated-hover.faa-slow:hover,
+.faa-parent.animated-hover:hover > .faa-vertical.faa-slow {
+  animation: vertical 4s ease infinite;
 }
 
 

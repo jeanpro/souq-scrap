@@ -267,10 +267,10 @@ function resetModal(selector,obj){
   }
 
   //remove messages
-  var msgs = $(modalBody).find("li");
+  var msgs = $(modalBody).find('.help-block').find("ul");
   if($(msgs).length){
-    msgs.forEach(function(i,ele){
-      $(ele).remove
+    msgs.each(function(i,ele){
+      $(ele).remove();
     });
   }
   //reset form

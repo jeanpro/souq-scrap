@@ -15,9 +15,9 @@
 			<td><a class="product-link" href="<%= data[i].url %>" target="_blank"><%= data[i].title %></a></td> 
 			<td class="text-center product-price"><%= data[i].actualPrice%></td>
 			<td class="text-center product-price-change">
-				<% if(data.status == 1){%>
+				<% if(data[i].status == 1){%>
 					<i class="fa fa-long-arrow-up" style="color:red" aria-hidden="true"></i>
-				<%} else if(data.status == -1){%>
+				<%} else if(data[i].status == -1){%>
 					<i class="fa fa-long-arrow-down" style="color:green" aria-hidden="true"></i>
 				<% } else{ %>
 					<i class="fa fa-minus" aria-hidden="true"></i>
