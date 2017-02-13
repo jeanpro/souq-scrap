@@ -216,16 +216,20 @@ function generateGraph(pid, obj, selector){
             if(data.success){
               var timestamps = [];
               var prices = [];
-              var dates = [];
+              var datesArray = [];
               data.stamps.forEach(function(ele,i){
                 var date = timestamp2dateObj(ele.timestamp);
-                dates.forEach(function(d){
-                  if(d.day != date.day || d.month != date.month || d.year != date.year){
-                    prices.push(ele.price);
-                    timestamps.push(date.day+"/"+date.month+"<br>("+ele.price+")");    
-                    dates.push({day:date.day, month:date.month, year:date.year});
+                if(datesArray.length > 0){
+                  if(!containsObject({day:date.day,month:date.month,year:date.year},datesArray)){
+                      prices.push(ele.price);
+                      timestamps.push(date.day+"/"+date.month+"<br>("+ele.price+")");    
+                      datesArray.push({day:date.day, month:date.month, year:date.year});
                   }
-                });
+                }else{
+                  prices.push(ele.price);
+                  timestamps.push(date.day+"/"+date.month+"<br>("+ele.price+")");    
+                  datesArray.push({day:date.day, month:date.month, year:date.year});
+                }
               });
               //var dataSetup = makeGraphData(prices, timestamps);
               //Create graph.
@@ -251,6 +255,15 @@ function generateGraph(pid, obj, selector){
       // TODO Mark the day you started tracking this shit
       if(obj){}//TODO
   });
+}
+
+function containsObject(obj, list) {
+    for (var i = 0; i < list.length; i++) {
+        if (JSON.stringify(list[i]) === JSON.stringify(obj)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 //TODO
