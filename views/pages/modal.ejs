@@ -145,3 +145,75 @@
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+    <!-- addModal -->
+    <div class="modal fade" tabindex="-1" id="addModal" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Add Product</h4>
+          </div>
+          <div class="modal-body">
+          <p>Please, insert the link from the product you want to monitor.</p>
+            <form id="addForm">
+                <div class="form-group">
+                  <label class="control-label" for="addproduct">URL:</label>
+                  <input type="text" class="form-control" name="addproduct" id="addproduct" placeholder="Ex: http://uae.souq.com/ae-en/htc-one-e8-dual-sim-16gb-4g-lte-white-7396674/i/" required>
+                </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button id="addTrack" type="button" class="btn btn-primary">Track</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+   <!-- RemoveModal -->
+      <div class="modal fade" tabindex="-1" id="removeModal" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">Remove Product</h4>
+            </div>
+            <div class="modal-body">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-sm-12">
+                    <p>Remove product from your tracker? (You can add it again anytime)</p>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12 text-center">
+                    <a href="" target="_blank">
+                      <img id="itemToRemoveImage" class="track-image" src="">
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+              <button id="removeTrack" type="button" class="btn btn-danger">Remove</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+
+    <!-- Graph Modal -->
+    <div class="modal fade" id="graphModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Price history</h4>
+          </div>
+          <div class="modal-body">
+             <div id="graphContainerModal" class="ct-chart ct-golden-section">Loading...</div>    
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <div id="isSmartphone"></div>

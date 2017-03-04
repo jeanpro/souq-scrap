@@ -13,9 +13,9 @@ var admin = require("firebase-admin");
 
 // Get a database reference to our posts
 var db = admin.database();
-var adminKey = ["k8uWMfck2FVxRMLCuwTaDckjwjm2","tTga6qjzLjMmlLmKv90qH0dlrq23"];
+var adminKey = ["ScfEosPnoUMMjHih6Yo65WnPWHs1","tTga6qjzLjMmlLmKv90qH0dlrq23"];
 //Max products t o track per user
-var maxProducts = 10;
+var maxProducts = 15;
 
 
 /*** NODE SCHEDULE ***/
@@ -36,7 +36,7 @@ var mainJob = schedule.scheduleJob(rule, function(){
   		if(snapshot.exists()){
   			console.log('Getting all pids!');
   			productArray = _.map(snapshot.val(),function(el,key){
-	  			if(el.status != 'linkBroken'){
+	  			if(el.status != 'linkBroken' && el.status != 'ProductOutOfStock'){
 	  				return {pid:key,url:el.url};
 	  			}else{
 	  				return {pid:key, url:null};
@@ -67,57 +67,80 @@ var mainJob = schedule.scheduleJob(rule, function(){
   						return;
   					}
   					else{ //Still left...
-  						//Update product
-	  					var pid = pidsToUpdate[0]; //first of the list
-	  					var url = _.find(productArray,_.matchesProperty('pid',pid)).url; //get url
-	  					if(url != null){
-		  					updatePrice(pid,url).then(function(data){
-		  						if(data.success){ //Product Updated! 
-		  							//Add to the updated list
-		  							console.log('Product Updated! - PID:',pid);
-		  						}else if(data.status === -1){
-		  							db.ref('products').child(pid).update({status:'linkBroken'});
-		  							var log = '------------\r\n';
-		  							log += new Date().toString();
+  						var pid;
+		  				var url;
+		  				var promises = [];
+  						for(var k=0; k<_.size(pidsToUpdate);k++ ){//Look for a product without broken link
+		  					pid = pidsToUpdate[k];
+		  					url = _.find(productArray,_.matchesProperty('pid',pid)).url; //get url
+		  					if(url != null){ 
+		  						break;
+		  					}else{ //If broken push to the updated list
+		  						promises.push(db.ref('updated').push().then(function(){
+		  							newEntry.set({
+		  								pid:pid
+		  							})
+		  						}));
+		  							
+		  					}
+		  				}
+		  				Promise.all(promises).then(function(){
+		  					if(url != null){
+			  					updatePrice(pid,url).then(function(data){
+			  						if(data.success){ //Product Updated! 
+			  							//Add to the updated list
+			  							console.log('Product Updated! - PID:',pid);
+			  						}else if(data.status === -1){//Product may be out of stock
+			  							db.ref('products').child(pid).update({status:'ProductOutOfStock'});
+			  							var log = '------------\r\n';
+			  							log += new Date().toString();
+				  						log += 'Error during update of PID: '+pid+'\r\n';
+				  						log += data.error; 
+				  						log += '------------\r\n';
+				  						fs.appendFile('log.txt', log, (err) => {
+										  if (err) throw err;
+										  console.log('Error Logged!');
+										});
+			  						}else if(data.status === -2){//Product not found
+			  							db.ref('products').child(pid).update({status:'LinkBroken'});
+			  							var log = '------------\r\n';
+			  							log += new Date().toString();
+				  						log += 'Error during update of PID: '+pid+'\r\n';
+				  						log += data.error; 
+				  						log += '------------\r\n';
+				  						fs.appendFile('log.txt', log, (err) => {
+										  if (err) throw err;
+										  console.log('Error Logged!');
+										});
+			  						}
+			  						else{
+			  							var log = '------------\r\n';
+			  							log += new Date().toString();
+				  						log += 'Error during update of PID: '+pid+'\r\n';
+				  						log += 'Data DUMP: '+JSON.stringify(data);
+				  						log += '------------\r\n';
+				  						fs.appendFile('log.txt', log, (err) => {
+										  if (err) console.log(err);
+										  console.log('Error Logged!');
+										});
+			  						}
+			  						var newEntry = db.ref('updated').push();
+			  							newEntry.set({
+			  								pid:pid
+			  							});
+			  					}).catch(function(err){
+			  						var log = '------------\r\n';
+			  						log += new Date().toString();
 			  						log += 'Error during update of PID: '+pid+'\r\n';
-			  						log += 'LINK BROKEN!!!';
-			  						log += '------------\r\n';
-			  						fs.appendFile('log.txt', log, (err) => {
-									  if (err) throw err;
-									  console.log('Error Logged!');
-									});
-		  						}else{
-		  							var log = '------------\r\n';
-		  							log += new Date().toString();
-			  						log += 'Error during update of PID: '+pid+'\r\n';
-			  						log += 'Data DUMP: '+JSON.stringify(data);
+			  						log += 'Error msg: '+JSON.stringify(err);
 			  						log += '------------\r\n';
 			  						fs.appendFile('log.txt', log, (err) => {
 									  if (err) console.log(err);
 									  console.log('Error Logged!');
 									});
-		  						}
-		  						var newEntry = db.ref('updated').push();
-		  							newEntry.set({
-		  								pid:pid
-		  							});
-		  					}).catch(function(err){
-		  						var log = '------------\r\n';
-		  						log += new Date().toString();
-		  						log += 'Error during update of PID: '+pid+'\r\n';
-		  						log += 'Error msg: '+JSON.stringify(err);
-		  						log += '------------\r\n';
-		  						fs.appendFile('log.txt', log, (err) => {
-								  if (err) console.log(err);
-								  console.log('Error Logged!');
-								});
-		  					});
-	  					}else{
-	  						var newEntry = db.ref('updated').push();
-		  							newEntry.set({
-		  								pid:pid
-		  							});
-	  					}
+			  					});
+		  					}
+		  				});
   					}
   				});
   			});
@@ -231,6 +254,41 @@ router.post('/add', function(req,res){
 	});
 });
 
+
+router.get('/remove',function(req,res){
+	var pid = req.query.pid || false;
+	var uid = req.query.uid || false;
+	if(pid == false || uid == false ){
+		res.send({success:false, error:"No item or user..."});
+	}
+
+	userRef = db.ref('usersInfo/'+uid);
+	userRef.once('value',function(snap){
+		if(snap.exists()){
+		  var user = snap.val();
+		  var remaining = user.remaining;
+		  if(!_.isEmpty(user.track)){
+		  	_.forEach(user.track,function(value,key){
+		  		if(value.pid === pid){
+		  			userRef.child('track/'+key).remove().then(function(){
+				  		userRef.update({remaining: remaining+1}).then(function(){
+					  		res.send({success:true});
+					  	}).catch(function(error){
+					  		console.log(error);
+					  		res.send({success:false, error:error});
+					  	});	
+				  	});
+		  		}
+		  	});
+		  }
+		}else{
+		  res.send({success:false, error:"No item or user..."});
+		}
+	});
+
+});
+
+
 router.get('/track',function(req,res){
 	var uid = req.query.uid;
 	var templateString = fs.readFileSync('./views/partials/track.ejs', 'utf-8');
@@ -262,7 +320,7 @@ router.get('/track',function(req,res){
 				var getTrackers = function trackersInformation(pid){	
 					var productRef = db.ref('products/'+pid);
 					return productRef.once('value',function(snap){
-						products.push({img:snap.val().img, title:snap.val().title, url:snap.val().url, actualPrice:snap.val().actualPrice});
+						products.push({img:snap.val().img, title:snap.val().title, url:snap.val().url, status:snap.val().status, actualPrice:snap.val().actualPrice});
 					});
 				};
 				//return promise for snap of the log of the products (price,timestamp)
@@ -294,6 +352,8 @@ router.get('/track',function(req,res){
 	});
 
 });
+
+
 
 router.post('/logs',function(req,res){
 	var pid = req.body.pid;
@@ -431,11 +491,19 @@ function updatePrice(pid, url, response){
 	            var now = new Date();
 	            //Get info from website
 	            var params = $('#productTrackingParams');
-	            if(_.isEmpty(params)){//product out
-	            	if(res){
-	            		res.send({success:false, status:-1, error:"Product out of website..."});
+	            if(_.isEmpty(params)){
+	            	if($('h5.notice').text() == 'This item is currently out of stock'){ //Product Out of Stock!
+	            		if(res){
+	            			res.send({success:false, status:-1, error:"Product out of stock."});
+		            	}else{
+		            		resolve({success:false, status:-1, error:"Product out of stock."});
+		            	}	
 	            	}else{
-	            		resolve({success:false, status:-1, error:"Product out of website..."});
+	            		if(res){
+	            			res.send({success:false, status:-2, error:"Product not found in the website."});
+		            	}else{
+		            		resolve({success:false, status:-2, error:"Product not found in the website."});
+		            	}
 	            	}
 	            }
 	            else{

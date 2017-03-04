@@ -31,6 +31,10 @@ $(".signinForm").on("submit", function(event){
         event.preventDefault(); // prevent default submit behaviour
         if(!$('.signinForm').find('.btn').hasClass('disabled')){
           loading();
+          setTimeout(function(){
+            alertSend("Unable to login, try again later.",'#successSignIn',"danger");
+            hideLoading();
+            },5000);
           // get values from FORM
           alertSend(" ","#successSignIn","info","Loading...");
           var email = $("input#email").val();
@@ -69,16 +73,20 @@ $("#signUpModal").on("shown.bs.modal", function(){
           var userAuth = handleSignUp(name,email,password);
           if(userAuth){
             userAuth.then(function(user){
+              alertSend("Alright! Redirecting...","#succesSignUp","success");
+              Cookies.set('uid', user.uid);
               // Add information from user in DB
-             var usersInfoRef = firebase.database().ref('usersInfo');
-             var newUser = usersInfoRef.push();
-              newUser.set({
+             var usersInfoRef = firebase.database().ref('usersInfo/'+user.uid);
+              usersInfoRef.update({
                     provider: user.providerData[0].providerId,
                     name: name,
                     email: user.providerData[0].email,
                     photo: user.providerData[0].photoURL
+              }).then(function(){
+                ga('send', 'event','click', 'submitForm', 'signUp');  
+              }).catch(function(error){
+                console.log(error);
               });
-              ga('send', 'event','click', 'submitForm', 'signUp');
             }).catch(function(error){
               alertSend(error.message,"#succesSignUp","danger","Error!");
               console.log(error);

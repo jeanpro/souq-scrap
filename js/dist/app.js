@@ -206,6 +206,7 @@ function hideLoading(){
 }
 
 function alertSend( msg, selector, type,strong){
+  var strong = strong || false;
   if(!type){
     var type = "danger";
   }
@@ -228,9 +229,9 @@ function alertSend( msg, selector, type,strong){
   if($(alerts).length){
     alerts.each(function(i,ele){
       $(ele).remove();
-    });  
+    });
   }
-  $(selector).prepend(alertHTML);
+    $(selector).prepend(alertHTML);
 }
 
 function resetModal(selector,obj){

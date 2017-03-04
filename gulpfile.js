@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
+var gutil = require('gulp-util');
 var pump = require('pump');
 var cleanCSS = require('gulp-clean-css');
 
@@ -31,6 +32,10 @@ gulp.task('minify-css',['concat-css'], function() {
 gulp.task('minify-js',['concat-js'], function(cb) {
     pump([
         gulp.src(['js/dist/app.js','js/index.js','js/auth.js','js/admin.js']),
+        uglify().on('error', function(err) {
+            gutil.log(gutil.colors.red('[Error:]'), err.toString());
+            this.emit('end');
+            }),
         uglify(),
         rename({ suffix: '.min' }),
         gulp.dest('public/js'),
@@ -38,5 +43,7 @@ gulp.task('minify-js',['concat-js'], function(cb) {
         cb
         );
 });
+
+
 
 gulp.task('default', ['minify-css', 'minify-js']);

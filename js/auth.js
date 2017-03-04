@@ -4,135 +4,190 @@ $(document).ready(function(){
     $("#links-collapse").collapse('hide');
   });
 
-/**
-  *** Load trackers
-**/
-var noProducts="";
-noProducts += "<i><p>No products to show. <a href=\"#\" data-toggle=\"modal\" data-target=\"#addModal\">Click here<\/a> and start monitoring prices on <a target=\"_blank\" href=\"http:\/\/www.souq.com\/\" >Souq.com<\/a><\/p><\/i>";
-  // var myChart = new Chartist.Line('.ct-chart', {
-  //     labels: weekDay(-1),
-  //     series: []
-  //   }, {
-  //     low: 0,
-  //     showArea: true
-  //   });
+  /**
+    *** Load trackers
+  **/
+  var noProducts="";
+  noProducts += "<i><p>No products to show. <a href=\"#\" data-toggle=\"modal\" data-target=\"#addModal\">Click here<\/a> and start monitoring prices on <a target=\"_blank\" href=\"http:\/\/www.souq.com\/\" >Souq.com<\/a><\/p><\/i>";
+    // var myChart = new Chartist.Line('.ct-chart', {
+    //     labels: weekDay(-1),
+    //     series: []
+    //   }, {
+    //     low: 0,
+    //     showArea: true
+    //   });
 
-var uid = Cookies.get('uid');
-//progressBarAnimate("#products", 10);
-$.ajax({
-  method: "GET",
-  url:"/track",
-  data: {uid:uid},
-  success:function(data){
-    if(data.success){
-      $("#products").html(data.html);
-      //Generate Graph Event
-      $(".graph-open").on('click', function(event){
-        var pid = $(this).data('id');
-        var dateObj = timestamp2dateObj($(this).data('original'));
-        var chartPromise = generateGraph(pid, dateObj, "#graphModal");
-        chartPromise.then(function(chart){
-          chart.on('draw', function(data) {
-            if(data.type === 'line' || data.type === 'area') {
-              data.element.animate({
-                d: {
-                  begin: 2000 * data.index,
-                  dur: 2000,
-                  from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
-                  to: data.path.clone().stringify(),
-                  easing: Chartist.Svg.Easing.easeOutQuint
-                }
-              });
+  var uid = Cookies.get('uid');
+  //progressBarAnimate("#products", 10);
+  $.ajax({
+    method: "GET",
+    url:"/track",
+    data: {uid:uid},
+    success:function(data){
+      if(data.success){
+        $("#products").html(data.html);
+        //Generate Graph Event
+        $(".graph-open").on('click', function(event){
+          var pid = $(this).data('id');
+          var dateObj = timestamp2dateObj($(this).data('original'));
+          var chartPromise = generateGraph(pid, dateObj, "#graphModal");
+          chartPromise.then(function(chart){
+            chart.on('draw', function(data) {
+              if(data.type === 'line' || data.type === 'area') {
+                data.element.animate({
+                  d: {
+                    begin: 2000 * data.index,
+                    dur: 2000,
+                    from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
+                    to: data.path.clone().stringify(),
+                    easing: Chartist.Svg.Easing.easeOutQuint
+                  }
+                });
+              }
+            });
+            chart.update();
+          }).catch(function(error){
+            setTimeout(function(){
+             $("#graphModal").modal('hide');
+             alertModal("danger","Could not open graph.","Error!");
+           },200); 
+          });
+        });
+        /** Remove Product **/
+        //Reset modal on hide
+        $("#removeModal").on("hidden.bs.modal", function(e){
+          resetModal("#removeModal");
+        });
+        //Add id to the modal on show
+        $("#removeModal").on("show.bs.modal", function(e){
+          $("#itemToRemoveImage").attr('src',$(this).data('src'));
+          $("#itemToRemoveImage").closest('a').attr('href',$(this).data('url'));
+          
+        });
+
+        $('.btn-remove-track').on('click',function(e){
+          var productId = $(this).data('id');
+          var productURL = $(this).closest('a').attr('href');
+          var src = $(this).closest('img').attr('src');
+
+          $("#removeModal").data('pid',productId);
+          $("#removeModal").data('src', src);
+          $("#removeModal").data('url', productURL);
+          $("#removeModal").modal('show');
+        });
+
+        $('#removeTrack').on('click',function(e){
+          e.preventDefault();
+          loading();
+          var timeout = setTimeout(function(){
+            hideLoading();
+          },5000);
+          var productId = $("#removeModal").data('pid');
+          $.ajax({
+            method:"GET",
+            url:"/remove",
+            data:{pid:productId, uid:firebase.auth().currentUser.uid},
+            success: function(data){
+              clearTimeout(timeout);hideLoading();
+              if(data.success == true){
+                alertSend('Item removed successfully', '#removeModal .modal-content .modal-body .container-fluid','success');
+                setTimeout(function(){
+                  location.reload();
+                },2000);
+              }else{
+                alertSend('Not able to access DB. Try again later...', '#removeModal .modal-content .modal-body .container-fluid','danger');
+                console.log(data.error);
+              }
+            },
+            error:function(error){
+              console.log(error);
+              alertSend('Error during request. Check console for more information.', '#removeModal .modal-content .modal-body .container-fluid','danger');
             }
           });
-          chart.update();
-        }).catch(function(error){
-          setTimeout(function(){
-           $("#graphModal").modal('hide');
-           alertModal("danger","Could not open graph.","Error!");
-         },200); 
         });
-      });
+
+      }
+      else{
+        $("#products").html(noProducts);
+      }
+    },
+    error:function(error){
+      console.log(error);
+      alertModal('alert-danger','Error during request...','Error');
+    }
+  });
+
+  /**
+    *** Adding products and trackers
+  **/
+  $('#addTrack').on('click', function(e){
+    e.preventDefault();
+    var url = JSON.parse(JSON.stringify($("#addproduct").val()));
+    var validate = validateURL(url);
+
+    if(!url){
+      alertSend("Empty URL. Please, check.", "#addModal .modal-body");
+      $("#addproduct").closest('.form-group').addClass('has-error');
+    }
+    else if(validate != true){
+      alertSend(validate, "#addModal .modal-body","danger","Invalid URL!");
+      $("#addproduct").closest('.form-group').addClass('has-error'); 
     }
     else{
-      $("#products").html(noProducts);
-    }
-  },
-  error:function(error){
-    console.log(error);
-    alertModal('alert-danger','Error during request...','Error');
-  }
-});
-
-/**
-  *** Adding products and trackers
-**/
-$('#addTrack').on('click', function(e){
-  e.preventDefault();
-  var url = JSON.parse(JSON.stringify($("#addproduct").val()));
-  var validate = validateURL(url);
-
-  if(!url){
-    alertSend("Empty URL. Please, check.", "#addModal .modal-body");
-    $("#addproduct").closest('.form-group').addClass('has-error');
-  }
-  else if(validate != true){
-    alertSend(validate, "#addModal .modal-body","danger","Invalid URL!");
-    $("#addproduct").closest('.form-group').addClass('has-error'); 
-  }
-  else{
-     var progress = progressBarAnimate("#addModal .modal-body",10);
-    loading();
-    var timeout = setTimeout(function(){
-      hideLoading();
-    },20000);
-    $.ajax(
-      {
-        url: '/add',
-        method: "POST",
-        data:{url:url, uid: firebase.auth().currentUser.uid}, //
-        success:function(data, textStatus, jqXHR){
-            $("#addModal .modal-body .progress-bar").css('width','100%');
-            $("#addModal .modal-body .progress").remove();
-            $("#addModal .modal-body .prepend").remove();
-          if(data.success){
-            resetModal("#addModal");
-            alertSend("You have "+data.remaining+" tracks remaining.", "#addModal .modal-body", "success","Product saved!"); 
-            $("#addproduct").closest('.form-group').addClass('has-success');
-            setTimeout(function(){
-              location.reload();
-            },2000);
+       var progress = progressBarAnimate("#addModal .modal-body",10);
+      loading();
+      var timeout = setTimeout(function(){
+        hideLoading();
+      },20000);
+      $.ajax(
+        {
+          url: '/add',
+          method: "POST",
+          data:{url:url, uid: firebase.auth().currentUser.uid}, //
+          success:function(data, textStatus, jqXHR){
+              $("#addModal .modal-body .progress-bar").css('width','100%');
+              $("#addModal .modal-body .progress").remove();
+              $("#addModal .modal-body .prepend").remove();
+            if(data.success){
+              resetModal("#addModal");
+              alertSend("You have "+data.remaining+" tracks remaining.", "#addModal .modal-body", "success","Product saved!"); 
+              $("#addproduct").closest('.form-group').addClass('has-success');
+              setTimeout(function(){
+                location.reload();
+              },2000);
+            }
+            else{
+              alertSend(data.error.message, "#addModal .modal-body","danger","Error!");
+              console.log(data.error);
+            }
+            clearTimeout(timeout);hideLoading();
+          },
+          error: function(jqXHR, textStatus, errorThrown){
+            alertSend("Error while processing request. Please, check again later.", "#addModal .modal-body","danger",errorThrown);
+            console.log(errorThrown);
+            clearTimeout(timeout);hideLoading();
           }
-          else{
-            alertSend(data.error.message, "#addModal .modal-body","danger","Error!");
-            console.log(data.error);
-          }
-          clearTimeout(timeout);hideLoading();
-        },
-        error: function(jqXHR, textStatus, errorThrown){
-          alertSend("Error while processing request. Please, check again later.", "#addModal .modal-body","danger",errorThrown);
-          console.log(errorThrown);
-          clearTimeout(timeout);hideLoading();
         }
-      }
-    );
-  }
+      );
+    }
+  });
+
+  $("#addModal").on("hidden.bs.modal", function(e){
+    resetModal("#addModal");
+  });
+
+  $('.signoutBtn').on('click', function(e){
+    ga('send', 'event','click', 'btn', 'SignOut');
+    loading();
+    setTimeout(function(){
+      hideLoading();
+    },5000);
+    signOut();  
+  });
+  hideLoading();
 });
 
-$("#addModal").on("hidden.bs.modal", function(e){
-  resetModal("#addModal");
-});
 
-$('.signoutBtn').on('click', function(e){
-  ga('send', 'event','click', 'btn', 'SignOut');
-  loading();
-  setTimeout(function(){
-    hideLoading();
-  },5000);
-  signOut();  
-});
-hideLoading();
-});
 
 
 
