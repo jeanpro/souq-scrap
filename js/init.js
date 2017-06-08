@@ -1,10 +1,10 @@
   // Initialize Firebase
   var config = {
-    apiKey: "AIzaSyAejbIcHE2XvotoO-26jVSdnhhNOd4kOZU",
-    authDomain: "souqbusq.firebaseapp.com",
-    databaseURL: "https://souqbusq.firebaseio.com",
-    storageBucket: "souqbusq.appspot.com",
-    messagingSenderId: "732260061095"
+    apiKey: "",
+    authDomain: "souqscrap.firebaseapp.com",
+    databaseURL: "https://souqscrap.firebaseio.com",
+    storageBucket: "souqscrap.appspot.com",
+    messagingSenderId: ""
   };
   firebase.initializeApp(config);
 
